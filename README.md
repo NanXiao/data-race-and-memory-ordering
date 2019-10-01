@@ -39,13 +39,16 @@ The following is excerpted from [Is Parallel Programming Hard, And, If So, What 
 For "machine-sized and properly aligned" in above statement, refer [Atomic Instruction](https://stackoverflow.com/questions/1762148/atomic-instruction):  
 > Some machine instructions are intrinsically atomic - for example, reading and writing properly aligned values of the native processor word size is atomic on many architectures.  
 
-E.g., on one CPU architecture whose word size is `64-bit`, to access an aligned `32-bit` variable, the CPU needs to fetch a `64-bit` memory block first (this is atomic), and mask the non-needed `32-bit` data.  
+E.g., on one CPU architecture whose word size is `64-bit`, to access an aligned `32-bit` variable, the CPU needs to fetch a `64-bit` memory block first (this is atomic), and mask the non-needed `32-bit` data. Refer [Why is integer assignment on a naturally aligned variable atomic on x86?](https://stackoverflow.com/a/36685056/2106207):  
+> "Natural" alignment means aligned to its own type width.  
+> TL;DR: The x86 ISA guarantees that naturally-aligned stores and loads are atomic, up to 64bits wide.
 
 To summarize, `volatile` prevents compiler to do optimization, but it can't prevent CPU to reorder instruction, nor guarantee atomic access. However, `volatile` can literally be used in some scenarios to avoid using atomic access: e.g., one thread stores machine-sized, properly aligned data while another thread loads.
 
 
 ## References:  
 [Acquire and Release Semantics](https://preshing.com/20120913/acquire-and-release-semantics/)  
+[Atomic Instruction](https://stackoverflow.com/questions/1762148/atomic-instruction)  
 [Atomic types should be used instead of "volatile" types](https://rules.sonarsource.com/c/tag/c11/RSPEC-3687)  
 Atomic weapons: [part 1](https://www.youtube.com/watch?v=A8eCGOqgvH4) and [part 2](https://www.youtube.com/watch?v=KeLBd2EJLOU)  
 [Benign Data Races: What Could Possibly Go Wrong?](https://software.intel.com/en-us/blogs/2013/01/06/benign-data-races-what-could-possibly-go-wrong)  
@@ -58,5 +61,6 @@ Atomic weapons: [part 1](https://www.youtube.com/watch?v=A8eCGOqgvH4) and [part 
 [Modern C](https://modernc.gforge.inria.fr/)  
 [What do each memory_order mean?](https://stackoverflow.com/questions/12346487/what-do-each-memory-order-mean)  
 [Who's afraid of a big bad optimizing compiler?](https://lwn.net/Articles/793253/)     
+[Why is integer assignment on a naturally aligned variable atomic on x86?](https://stackoverflow.com/a/36685056/2106207)  
 [You Don’t Know Jack about Shared Variables or Memory Models](https://queue.acm.org/detail.cfm?id=2088916)  
 [簡介 C++11 atomic 和 memory order](https://medium.com/fcamels-notes/%E7%B0%A1%E4%BB%8B-c-11-memory-model-b3f4ed81fea6)  
