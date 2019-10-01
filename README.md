@@ -34,7 +34,12 @@ Another thing which always makes people confused is `volatile`. The following is
 > Takeaway 3.17.5.10 volatile objects are stored to memory each time they are modified.
 
 The following is excerpted from [Is Parallel Programming Hard, And, If So, What Can You Do About It?](https://mirrors.edge.kernel.org/pub/linux/kernel/people/paulmck/perfbook/perfbook.html):  
-> the volatile keyword can prevent load tearing and store tearing in cases where the loads and stores are machine-sized and properly aligned. It can also prevent load fusing, store fusing, invented loads, and invented stores. However, although it does prevent the compiler from reordering volatile accesses with each other, it does nothing to prevent the CPU from reordering these accesses. Furthermore, it does nothing to prevent either compiler or CPU from reordering non-volatile accesses with each other or with volatile accesses.
+> the volatile keyword can prevent load tearing and store tearing in cases where the loads and stores are machine-sized and properly aligned. It can also prevent load fusing, store fusing, invented loads, and invented stores. However, although it does prevent the compiler from reordering volatile accesses with each other, it does nothing to prevent the CPU from reordering these accesses. Furthermore, it does nothing to prevent either compiler or CPU from reordering non-volatile accesses with each other or with volatile accesses.  
+
+For "machine-sized and properly aligned" in above statement, refer [Atomic Instruction](https://stackoverflow.com/questions/1762148/atomic-instruction):  
+> Some machine instructions are intrinsically atomic - for example, reading and writing properly aligned values of the native processor word size is atomic on many architectures.  
+
+E.g., on one CPU architecture whose word size is `64-bit`, to access an aligned `32-bit` variable, the CPU needs to fetch a `64-bit` memory block first (this is atomic), and mask the non-needed `32-bit` data.  
 
 To summarize, `volatile` prevents compiler to do optimization, but it can't prevent CPU to reorder instruction, nor guarantee atomic access. However, `volatile` can literally be used in some scenarios to avoid using atomic access: e.g., one thread stores machine-sized, properly aligned data while another thread loads.
 
