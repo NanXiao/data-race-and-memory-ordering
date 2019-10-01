@@ -28,6 +28,17 @@ Another concept which is realted to `SC`:
 
 Then it is easy to understand [std::memory_order](https://en.cppreference.com/w/cpp/atomic/memory_order). `memory_order_seq_cst` is the most strongest one, which may introduce performance penalty. `memory_order_acquire` and `memory_order_release` can be used to synchronize among different threads: one thread calls `write-release`, the other thread calls `read-acquire` and sees the modification the first thread has done before `write-release`. `memory_order_acq_rel` is the combination of `memory_order_acquire` and `memory_order_release`. `memory_order_relaxed` is the weakest, and it is used for there is no synchronizaion need among threads (e.g., counter program).  
 
+Another thing which always makes people confused is `volatile`. The following is excerpted from [Modern C](https://modernc.gforge.inria.fr/):  
+
+> Takeaway 3.17.5.9 volatile objects are reloaded from memory each time they are accessed.  
+> Takeaway 3.17.5.10 volatile objects are stored to memory each time they are modified.
+
+The following is excerpted from [Is Parallel Programming Hard, And, If So, What Can You Do About It?](https://mirrors.edge.kernel.org/pub/linux/kernel/people/paulmck/perfbook/perfbook.html):  
+> the volatile keyword can prevent load tearing and store tearing in cases where the loads and stores are machine-sized and properly aligned. It can also prevent load fusing, store fusing, invented loads, and invented stores. However, although it does prevent the compiler from reordering volatile accesses with each other, it does nothing to prevent the CPU from reordering these accesses. Furthermore, it does nothing to prevent either compiler or CPU from reordering non-volatile accesses with each other or with volatile accesses.
+
+To summarize, `volatile` prevents compiler to do optimization, but it can't prevent CPU to reorder instruction, nor guarantee atomic access. However, `volatile` can literally be used in some scenarios to avoid using atomic access: e.g., one thread stores machine-sized, properly aligned data while another thread loads.
+
+
 ## References:  
 [Acquire and Release Semantics](https://preshing.com/20120913/acquire-and-release-semantics/)  
 [Atomic types should be used instead of "volatile" types](https://rules.sonarsource.com/c/tag/c11/RSPEC-3687)  
@@ -39,6 +50,7 @@ Atomic weapons: [part 1](https://www.youtube.com/watch?v=A8eCGOqgvH4) and [part 
 [C++11/14/17 atomics and memory model: Before the story consumes you](https://www.youtube.com/watch?v=DS2m7T6NKZQ)  
 [Hacker News](https://news.ycombinator.com/item?id=11908098)   
 [Is Parallel Programming Hard, And, If So, What Can You Do About It?](https://mirrors.edge.kernel.org/pub/linux/kernel/people/paulmck/perfbook/perfbook.html)   
+[Modern C](https://modernc.gforge.inria.fr/)  
 [What do each memory_order mean?](https://stackoverflow.com/questions/12346487/what-do-each-memory-order-mean)  
 [Who's afraid of a big bad optimizing compiler?](https://lwn.net/Articles/793253/)     
 [You Don’t Know Jack about Shared Variables or Memory Models](https://queue.acm.org/detail.cfm?id=2088916)  
